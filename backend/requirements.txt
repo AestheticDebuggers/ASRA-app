@@ -1,4 +1,5 @@
-flask
-torch
-torchvision
-Pillow
+fastapi
+uvicorn
+onnxruntime
+numpy
+pillow

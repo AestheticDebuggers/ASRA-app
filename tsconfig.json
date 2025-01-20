@@ -33,7 +33,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "next-env.d.ts",
-    "out/types/**/*.ts"
+    "out/types/**/*.ts",
+    "types/**/*.ts"  // Add this line to include your custom types folder
   ],
   "exclude": [
     "node_modules"

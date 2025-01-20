@@ -1,23 +1,15 @@
-import axios from 'axios';
-
-
-interface PredictionResponse {
-  prediction: string;
-}
-
-export const predictImage = async (imageFile: File): Promise<PredictionResponse> => {
+export async function predict(file: File) {
   const formData = new FormData();
-  formData.append('image', imageFile);
+  formData.append("file", file);
 
-  try {
-    const response = await axios.post<PredictionResponse>(
-      'http://127.0.0.1:5000/predict',
-      formData,
-      { headers: { 'Content-Type': 'multipart/form-data' } }
-    );
-    return response.data;
-  } catch (error) {
-    console.error('Error during prediction:', error);
-    throw new Error('Failed to get prediction.');
+  const response = await fetch("/api/predict", {
+      method: "POST",
+      body: formData,
+  });
+
+  if (!response.ok) {
+      throw new Error("Error predicting face.");
   }
-};
+
+  return response.json();
+}

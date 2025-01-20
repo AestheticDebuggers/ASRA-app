@@ -24,7 +24,7 @@ const Navbar = () => {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
-              className="fixed right-0 top-0 h-full w-1/5 bg-[#212121] overflow-y-auto p-6"
+              className="fixed right-0 top-0 h-full w-1/5 bg-[#212121] overflow-y-auto p-6 z-50"
             >
               <button onClick={closeMenu} className="float-right text-lg text-white">
                 X

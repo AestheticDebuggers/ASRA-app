@@ -1,9 +1,22 @@
 "use client";
 
-import Link from 'next/link';
-import Navbar from './components/NavBar';
+import Link from "next/link";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Navbar from "./components/NavBar";
 
 export default function HomePage() {
+  const router = useRouter();
+
+  // Simulated authentication check (replace with real authentication logic)
+  const isLoggedIn = false; // Replace with actual login status logic.
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push("/dashboard"); // Redirect to dashboard if already logged in.
+    }
+  }, [isLoggedIn, router]);
+
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-[#1E1E2E] via-[#3A3A5E] to-[#1E1E2E] text-[#EDEDED]">
       <Navbar />
@@ -14,10 +27,15 @@ export default function HomePage() {
           <p className="mt-4 text-lg text-gray-400">
             The Automated Smart Recognition Attendance System that simplifies attendance tracking.
           </p>
-          <div className="mt-6">
-            <Link href="/dashboard">
-              <button className="px-6 py-3 bg-[#4F46E5] text-white font-semibold rounded-lg shadow-md hover:shadow-lg hover:bg-[#4338CA]">
-                Get Started
+          <div className="mt-6 space-x-4">
+            <Link href="/login">
+              <button className="px-6 py-3 bg-[#4F46E5] text-white font-semibold rounded-lg shadow-md hover:shadow-lg hover:bg-[#4F46E5]">
+                Log In
+              </button>
+            </Link>
+            <Link href="/register">
+              <button className="px-6 py-3 bg-[#4F46E5] text-white font-semibold rounded-lg shadow-md hover:shadow-lg hover:bg-[#4F46E5]">
+                Register
               </button>
             </Link>
           </div>
