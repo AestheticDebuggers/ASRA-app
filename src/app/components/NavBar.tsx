@@ -39,9 +39,9 @@ const Navbar = () => {
                   About
                 </p>
               </Link>
-              <Link href="/contact">
+              <Link href="/dashboard">
                 <p className="block mt-4 text-[#A78BFA] hover:text-white" onClick={closeMenu}>
-                  Contact
+                  Dashboard
                 </p>
               </Link>
             </motion.div>

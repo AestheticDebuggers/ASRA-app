@@ -1,20 +1,40 @@
-from fastapi import FastAPI, UploadFile
-import onnxruntime
-import numpy as np
-from PIL import Image
+from fastapi import FastAPI, File, UploadFile, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+from model_inference import run_inference_on_image
+from io import BytesIO
+import base64
 
 app = FastAPI()
-model = onnxruntime.InferenceSession("face_recognition_model.onnx")
 
-def preprocess(image: Image.Image):
-    image = image.resize((224, 224))
-    image = np.array(image).astype("float32")
-    image = np.transpose(image, (2, 0, 1)) / 255.0  # Normalize
-    return np.expand_dims(image, axis=0)
+# Allow cross-origin requests from your frontend (Next.js)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Replace with your frontend's URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.post("/predict/")
-async def predict(file: UploadFile):
-    image = Image.open(file.file)
-    input_data = preprocess(image)
-    outputs = model.run(None, {"input": input_data})
-    return {"prediction": outputs[0].tolist()}
+@app.post("/log-attendance")
+async def log_attendance(request: Request, file: UploadFile = File(None)):
+    try:
+        if file:  # If the file is uploaded (LiveAttendance)
+            image_data = await file.read()
+            image = BytesIO(image_data)
+        else:  # If base64 image data is sent (LiveRecognition)
+            data = await request.json()
+            image_data = data.get("image_data")
+            if not image_data:
+                raise HTTPException(status_code=400, detail="No image data provided")
+            # Convert base64 image data to binary
+            image_bytes = base64.b64decode(image_data.split(",")[1])
+            image = BytesIO(image_bytes)
+
+        result = run_inference_on_image(image)
+
+        if result["success"]:
+            return {"message": "Attendance logged", "success": True}
+        else:
+            return {"message": "Face not recognized", "success": False}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

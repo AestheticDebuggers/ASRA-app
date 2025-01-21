@@ -1,5 +1,11 @@
 fastapi
-uvicorn
+torch
+onnx
 onnxruntime
 numpy
 pillow
+flask
+flask-cors
+requests
+gunicorn
+uvicorn
