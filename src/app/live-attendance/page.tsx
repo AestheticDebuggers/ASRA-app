@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from 'react';
+import {setDoc} from 'firebase/firestore';
 
 export default function LiveAttendance() {
   const [loading, setLoading] = useState(false);

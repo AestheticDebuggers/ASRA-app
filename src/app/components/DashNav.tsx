@@ -3,7 +3,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Home, Settings, Users, FileText, Tag, ChevronLeft, ChevronRight } from "lucide-react";
 
-const Sidebar = () => {
+const Dashnav = () => {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -25,9 +25,9 @@ const Sidebar = () => {
 
         {/* Sidebar Items */}
         <nav className="mt-6 space-y-2">
-          <Link href="/dashboard" className="flex items-center p-2 hover:bg-gray-800 rounded">
+          <Link href="/" className="flex items-center p-2 hover:bg-gray-800 rounded">
             <Home className="w-5 h-5" />
-            {sidebarOpen && <span className="ml-2">Dashboard</span>}
+            {sidebarOpen && <span className="ml-2">Home</span>}
           </Link>
 
           {/* Settings Section */}
@@ -51,4 +51,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default Dashnav;

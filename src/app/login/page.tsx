@@ -1,10 +1,44 @@
 "use client";
 
 import React, { useState } from "react";
+import { auth, db } from "../firebase/config";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(""); // Reset error message
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Check if user exists in Firestore
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) {
+        // Automatically add user to Firestore if not found
+        await setDoc(userRef, {
+          email: user.email,
+          createdAt: new Date(),
+          role: "staff",
+        });
+      }
+
+      // Redirect staff after login
+      console.log("Staff logged in:", user);
+      window.location.href = "/dashboard";
+    } catch (error: any) {
+      console.error("Login Error:", error);
+      setError("Invalid email or password.");
+    }
+  };
 
   return (
     <section
@@ -13,25 +47,14 @@ const Login = () => {
     >
       <div className="relative w-[400px] h-[450px] bg-transparent border-2 border-white/50 rounded-xl backdrop-blur-[15px] flex justify-center items-center p-6">
         <div className="w-full">
-          <form action="" className="w-full">
-            <h2 className="text-center text-white text-2xl mb-8">Login</h2>
+          <form onSubmit={handleLogin} className="w-full">
+            <h2 className="text-center text-white text-2xl mb-6">Staff Login</h2>
+
+            {/* Error Message */}
+            {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
             {/* Email Field */}
-            <div className="relative mb-8 w-full border-b-2 border-white">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="white"
-                className="absolute top-[20px] right-[10px] w-5 h-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21.75 12.75v6a2.25 2.25 0 01-2.25 2.25H4.5a2.25 2.25 0 01-2.25-2.25v-6m19.5-4.5v-3.75a2.25 2.25 0 00-2.25-2.25H4.5a2.25 2.25 0 00-2.25 2.25V8.25m19.5 4.5h-19.5"
-                />
-              </svg>
+            <div className="relative mb-6 w-full border-b-2 border-white">
               <input
                 type="email"
                 value={email}
@@ -49,21 +72,7 @@ const Login = () => {
             </div>
 
             {/* Password Field */}
-            <div className="relative mb-8 w-full border-b-2 border-white">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="white"
-                className="absolute top-[20px] right-[10px] w-5 h-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16.5 10.5c.75-.75 1.5-1.5 1.5-3 0-2.485-1.015-4.5-3-4.5-1.5 0-2.625.75-3 2.25m6 4.5h3.75m-12-3c0-1.5.75-2.625 2.25-3 2.25 0 3.75 1.5 3.75 3m-6 1.5v6m6-6v6m-12 3.75c0 .825.675 1.5 1.5 1.5h15c.825 0 1.5-.675 1.5-1.5V9c0-.825-.675-1.5-1.5-1.5h-15C4.675 7.5 4 8.175 4 9v10.5z"
-                />
-              </svg>
+            <div className="relative mb-6 w-full border-b-2 border-white">
               <input
                 type="password"
                 value={password}
@@ -86,25 +95,16 @@ const Login = () => {
                 Remember Me
               </label>
               <a href="#" className="hover:underline">
-                Forgot Password
+                Forgot Password?
               </a>
             </div>
 
             <button
               type="submit"
-              className="w-full h-[40px] rounded-full bg-white text-black font-semibold text-lg cursor-pointer mb-6"
+              className="w-full h-[40px] rounded-full bg-white text-black font-semibold text-lg cursor-pointer"
             >
               Log in
             </button>
-
-            <div className="text-center text-white text-sm">
-              <p>
-                Don&apos;t have an account?{" "}
-                <a href="#" className="font-semibold hover:underline">
-                  Register
-                </a>
-              </p>
-            </div>
           </form>
         </div>
       </div>
